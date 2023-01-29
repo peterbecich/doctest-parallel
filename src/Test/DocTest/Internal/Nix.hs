@@ -17,10 +17,8 @@ import System.FilePath ((</>), isDrive, takeDirectory)
 import System.Process (readProcess)
 
 #if __GLASGOW_HASKELL__ >= 900
-import GHC.Data.Maybe (liftMaybeT)
 import System.Info (fullCompilerVersion)
 #else
-import Maybes (liftMaybeT)
 import System.Info (compilerVersion)
 
 fullCompilerVersion :: Version
@@ -44,7 +42,8 @@ compilerVersionStr = intercalate "." (map show (versionBranch fullCompilerVersio
 --
 findDirectoryUp :: (FilePath -> IO (Maybe a)) -> MaybeT IO a
 findDirectoryUp f = do
-  home <- liftMaybeT getHomeDirectory
+  -- home <- hoistMaybe getHomeDirectory
+  home <- error "foo"
   MaybeT (go home =<< getCurrentDirectory)
  where
   go home cwd
@@ -82,7 +81,8 @@ findLocalPackageDb = do
     relDir = "dist-newstyle" </> "packagedb" </> ("ghc-" ++ compilerVersionStr)
     absDir = projectRoot </> relDir
   ifM
-    (liftMaybeT (doesDirectoryExist absDir))
+    -- (hoistMaybe (doesDirectoryExist absDir))
+    (error "foo")
     (return absDir)
     mzero
 
